@@ -2,6 +2,30 @@ const { connect } = ReactRedux;
 const { Provider } = ReactRedux;
 const { createStore } = Redux;
 
+let nextTodoId = 0;
+const addTodo = (text) => {
+  return {
+    type: 'ADD_TODO',
+    id: nextTodoId++,
+    text
+  };
+};
+
+const setVisibilityFilter = (filter) => {
+  return {
+    type: 'SET_VISIBILITY_FILTER',
+    filter
+  };
+};
+
+const toggleTodo = (id) => {
+  return {
+    type: 'TOGGLE_TODO',
+    id
+  }
+}
+
+
 const todo = (state, action) => {
   switch (action.type) {
     case 'ADD_TODO':
@@ -106,10 +130,7 @@ const mapDispatchToLinkProps = (
 ) => {
   return {
     onClick: () => {
-      dispatch({
-        type: 'SET_VISIBILITY_FILTER',
-        filter: ownProps.filter
-      });
+      dispatch(setVisibilityFilter(ownProps.filter));
     }
   };
 }
@@ -138,11 +159,7 @@ let AddTodo = ({ dispatch }) => {
         input = node;
       }} />
         <button onClick={() => {
-          dispatch({
-            type: 'ADD_TODO',
-            id: nextTodoId++,
-            text: input.value
-          })
+          dispatch(addTodo(input.value))
           input.value = '';
         }}>
         Add todo
@@ -190,10 +207,7 @@ const mapDispatchToTodoListProps = (
 ) => {
   return {
     onTodoClick: id => {
-      dispatch({
-        type: 'TOGGLE_TODO',
-        id
-      })
+      dispatch(toggleTodo(id))
     }
   }
 }
@@ -207,7 +221,6 @@ VisibleTodoList.contextTypes = {
   store: React.PropTypes.object
 };
 
-let nextTodoId = 0;
 const TodoApp = () => (
   <div>
     <AddTodo />
