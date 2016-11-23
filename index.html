@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Redux learn</title>
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
   <script src="https://wzrd.in/standalone/expect@latest"></script>
   <script src="https://wzrd.in/standalone/deep-freeze@latest"></script>
   <script>
@@ -17,6 +18,20 @@
               completed: false
             }
           ]
+          break;
+
+        case 'TOGGLE_TODO':
+          return state.map(todo => {
+            if(todo.id !== action.id) {
+              return todo;
+            }
+
+            return {
+              id: todo.id,
+              text: todo.text,
+              completed: !todo.completed
+            }
+          })
           break;
 
         default:
@@ -47,7 +62,48 @@
       ).toEqual(stateAfter);
     }
 
+    const testToggleTodo = () => {
+      const stateBefore = [
+        {
+          id: 0,
+          text: 'Learn Redux',
+          completed: false
+        },
+        {
+          id: 1,
+          text: 'Go shopping Redux',
+          completed: false
+        }
+      ];
+
+      const action = {
+        type: 'TOGGLE_TODO',
+        id: 1
+      };
+
+      const stateAfter = [
+        {
+          id: 0,
+          text: 'Learn Redux',
+          completed: false
+        },
+        {
+          id: 1,
+          text: 'Go shopping Redux',
+          completed: true
+        }
+      ];
+
+      deepFreeze(stateBefore);
+      deepFreeze(action);
+
+      expect(
+        todos(stateBefore, action)
+      ).toEqual(stateAfter);
+    }
+
     testAddTodo();
+    testToggleTodo();
     console.log('All tests have passed');
 
   </script>
